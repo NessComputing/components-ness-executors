@@ -24,10 +24,7 @@ import com.yammer.metrics.core.Meter;
 import com.yammer.metrics.core.MetricsRegistry;
 import com.yammer.metrics.core.Timer;
 
-/**
- * This class is only public for JMX purposes, do not use!
- */
-public class TimerWrapper extends CallableWrapper
+class TimerWrapper extends CallableWrapper
 {
     private final String threadPoolName;
     private Metrics metrics;
@@ -72,7 +69,7 @@ public class TimerWrapper extends CallableWrapper
         };
     }
 
-    public static class Metrics
+    static class Metrics
     {
         Meter exceptionMeter;
         Meter enqueueMeter;
