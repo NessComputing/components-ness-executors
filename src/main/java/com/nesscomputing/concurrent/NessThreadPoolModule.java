@@ -75,6 +75,7 @@ public class NessThreadPoolModule extends AbstractModule
     private RejectedExecutionHandler defaultRejectedHandler = ThreadPoolConfiguration.DEFAULT_REJECTED_HANDLER.getHandler();
 
     private boolean threadDelegatingWrapperEnabled = true;
+    private boolean timingWrapperEnabled = true;
 
     public NessThreadPoolModule(String threadPoolName) {
         this.threadPoolName = threadPoolName;
@@ -91,6 +92,9 @@ public class NessThreadPoolModule extends AbstractModule
         bind (ExecutorServiceManagementBean.class).annotatedWith(annotation).toProvider(poolProvider.getManagementProvider());
         MBeanModule.newExporter(binder()).export(ExecutorServiceManagementBean.class).annotatedWith(annotation).as(createMBeanName());
 
+        if (timingWrapperEnabled) {
+            bindWrapper(binder()).toProvider(new TimerWrapperProvider(threadPoolName));
+        }
         if (threadDelegatingWrapperEnabled) {
             bindWrapper(binder()).toInstance(ThreadDelegatingDecorator.THREAD_DELEGATING_WRAPPER);
         }
@@ -152,7 +156,7 @@ public class NessThreadPoolModule extends AbstractModule
     }
 
     /**
-     * Remove an already-added CallableWrapper.
+     * Remove thread delegated wrapper.
      */
     public NessThreadPoolModule disableThreadDelegation()
     {
@@ -160,9 +164,18 @@ public class NessThreadPoolModule extends AbstractModule
         return this;
     }
 
+    /**
+     * Remove timing wrapper.
+     */
+    public NessThreadPoolModule disableTiming()
+    {
+        this.timingWrapperEnabled = false;
+        return this;
+    }
+
     private String createMBeanName()
     {
-        return "com.nesscomputing.thread-pool:name=" + threadPoolName;
+        return "com.nesscomputing.concurrent:type=ThreadPool,name=" + threadPoolName;
     }
 
     @Singleton

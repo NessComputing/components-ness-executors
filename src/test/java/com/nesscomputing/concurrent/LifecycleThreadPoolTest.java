@@ -31,6 +31,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
+import com.yammer.metrics.guice.InstrumentationModule;
 
 import org.junit.Test;
 import org.weakref.jmx.guice.MBeanModule;
@@ -98,6 +99,8 @@ public class LifecycleThreadPoolTest
                 install (ConfigModule.forTesting());
                 install (new LifecycleModule());
                 install (new NessThreadPoolModule("test"));
+
+                install (new InstrumentationModule());
 
                 bind (MBeanServer.class).toInstance(ManagementFactory.getPlatformMBeanServer());
                 install (new MBeanModule());
