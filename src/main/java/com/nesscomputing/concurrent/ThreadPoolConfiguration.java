@@ -31,12 +31,12 @@ import org.skife.config.TimeSpan;
 /**
  * Configuration for {@link NessThreadPoolModule}.
  */
-interface ThreadPoolConfiguration {
-
+interface ThreadPoolConfiguration
+{
     static final int DEFAULT_MIN_THREADS = 1;
     static final int DEFAULT_MAX_THREADS = 16;
     static final TimeSpan DEFAULT_TIMEOUT = new TimeSpan("30m");
-    static final int DEFAULT_QUEUE_SIZE = 100;
+    static final int DEFAULT_QUEUE_SIZE = 10;
     static final RejectedHandler DEFAULT_REJECTED_HANDLER = RejectedHandler.CALLER_RUNS;
 
     /**

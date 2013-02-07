@@ -77,13 +77,41 @@ public class NessThreadPoolModule extends AbstractModule
     private boolean threadDelegatingWrapperEnabled = true;
     private boolean timingWrapperEnabled = true;
 
-    public NessThreadPoolModule(String threadPoolName) {
+    NessThreadPoolModule(String threadPoolName)
+    {
         this.threadPoolName = threadPoolName;
         this.annotation = Names.named(threadPoolName);
     }
 
+    /**
+     * Create a default thread pool.
+     */
+    public static NessThreadPoolModule defaultPool(String threadPoolName)
+    {
+        return new NessThreadPoolModule(threadPoolName);
+    }
+
+    /**
+     * Create a thread pool for long-running tasks.  The default settings will change to not have a
+     * run queue.
+     */
+    public static NessThreadPoolModule longTaskPool(String threadPoolName, int poolSize)
+    {
+        return new NessThreadPoolModule(threadPoolName).withDefaultMaxThreads(poolSize).withDefaultQueueSize(0);
+    }
+
+    /**
+     * Create a thread pool for short-running tasks.  The default settings will change to have one thread
+     * available per core, plus a few to pick up slack.
+     */
+    public static NessThreadPoolModule shortTaskPool(String threadPoolName, int queueSize)
+    {
+        return new NessThreadPoolModule(threadPoolName).withDefaultMaxThreads(Runtime.getRuntime().availableProcessors() + 2).withDefaultQueueSize(queueSize);
+    }
+
     @Override
-    protected void configure() {
+    protected void configure()
+    {
         Multibinder.newSetBinder(binder(), CallableWrapper.class, annotation);
 
         PoolProvider poolProvider = new PoolProvider();
