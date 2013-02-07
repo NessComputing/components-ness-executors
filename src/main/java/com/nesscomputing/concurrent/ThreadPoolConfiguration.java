@@ -29,7 +29,7 @@ import org.skife.config.DefaultNull;
 import org.skife.config.TimeSpan;
 
 /**
- * Configuration for {@link LifecycledThreadPoolModule}.
+ * Configuration for {@link NessThreadPoolModule}.
  */
 interface ThreadPoolConfiguration {
 

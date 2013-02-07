@@ -28,7 +28,9 @@ import javax.management.MBeanServer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.name.Named;
+import com.google.inject.name.Names;
 
 import org.junit.Test;
 import org.weakref.jmx.guice.MBeanModule;
@@ -37,6 +39,8 @@ import com.nesscomputing.config.ConfigModule;
 import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.LifecycleModule;
+import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScope;
+import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScopeModule;
 
 public class LifecycleThreadPoolTest
 {
@@ -47,6 +51,10 @@ public class LifecycleThreadPoolTest
     @Named("test")
     ExecutorService service;
 
+    @Inject(optional=true)
+    @Named("delegated")
+    Provider<Object> scopedProvider;
+
     @Test
     public void testSameThread() throws Exception
     {
@@ -56,7 +64,7 @@ public class LifecycleThreadPoolTest
             {
                 install (ConfigModule.forTesting());
                 install (new LifecycleModule());
-                install (new LifecycledThreadPoolModule("test").withDefaultMaxThreads(0));
+                install (new NessThreadPoolModule("test").withDefaultMaxThreads(0).disableThreadDelegation());
             }
         }).injectMembers(this);
 
@@ -86,12 +94,21 @@ public class LifecycleThreadPoolTest
             @Override
             protected void configure()
             {
+                install (new ThreadDelegatedScopeModule());
                 install (ConfigModule.forTesting());
                 install (new LifecycleModule());
-                install (new LifecycledThreadPoolModule("test"));
+                install (new NessThreadPoolModule("test"));
 
                 bind (MBeanServer.class).toInstance(ManagementFactory.getPlatformMBeanServer());
                 install (new MBeanModule());
+
+                bind (Object.class).annotatedWith(Names.named("delegated")).toProvider(new Provider<Object>() {
+                    @Override
+                    public Object get()
+                    {
+                        return new Object();
+                    }
+                }).in(ThreadDelegatedScope.SCOPE);
             }
         }).injectMembers(this);
 
@@ -99,10 +116,13 @@ public class LifecycleThreadPoolTest
 
         final Thread currentThread = Thread.currentThread();
 
+        final Object threadDelegatedObject = scopedProvider.get();
+
         Future<Boolean> future = service.submit(new Callable<Boolean>() {
             @Override
             public Boolean call()
             {
+                assertTrue(threadDelegatedObject == scopedProvider.get());
                 return currentThread == Thread.currentThread();
             }
         });

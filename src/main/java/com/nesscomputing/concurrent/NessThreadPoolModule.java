@@ -28,16 +28,19 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.AbstractModule;
+import com.google.inject.Binder;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import com.google.inject.binder.LinkedBindingBuilder;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.mogwee.executors.LoggingExecutor;
 
@@ -59,7 +62,7 @@ import com.nesscomputing.logging.Log;
  * has the prefix {@code ness.thread-pool.[pool-name]}.
  * @see ThreadPoolConfiguration Thread pool configuration options
  */
-public class LifecycledThreadPoolModule extends AbstractModule
+public class NessThreadPoolModule extends AbstractModule
 {
     private static final Log LOG = Log.findLog();
     private final String threadPoolName;
@@ -71,28 +74,32 @@ public class LifecycledThreadPoolModule extends AbstractModule
     private int defaultQueueSize = ThreadPoolConfiguration.DEFAULT_QUEUE_SIZE;
     private RejectedExecutionHandler defaultRejectedHandler = ThreadPoolConfiguration.DEFAULT_REJECTED_HANDLER.getHandler();
 
-    private final Set<CallableWrapper> wrappers = Sets.newLinkedHashSet();
+    private boolean threadDelegatingWrapperEnabled = true;
 
-    public LifecycledThreadPoolModule(String threadPoolName) {
+    public NessThreadPoolModule(String threadPoolName) {
         this.threadPoolName = threadPoolName;
         this.annotation = Names.named(threadPoolName);
-
-        wrappers.add(ThreadDelegatingDecorator.THREAD_DELEGATING_WRAPPER);
     }
 
     @Override
     protected void configure() {
+        Multibinder.newSetBinder(binder(), CallableWrapper.class, annotation);
+
         PoolProvider poolProvider = new PoolProvider();
 
         bind (ExecutorService.class).annotatedWith(annotation).toProvider(poolProvider).in(Scopes.SINGLETON);
         bind (ExecutorServiceManagementBean.class).annotatedWith(annotation).toProvider(poolProvider.getManagementProvider());
         MBeanModule.newExporter(binder()).export(ExecutorServiceManagementBean.class).annotatedWith(annotation).as(createMBeanName());
+
+        if (threadDelegatingWrapperEnabled) {
+            bindWrapper(binder()).toInstance(ThreadDelegatingDecorator.THREAD_DELEGATING_WRAPPER);
+        }
     }
 
     /**
      * Set the default pool core thread count.
      */
-    public LifecycledThreadPoolModule withDefaultMinThreads(int defaultMinThreads)
+    public NessThreadPoolModule withDefaultMinThreads(int defaultMinThreads)
     {
         this.defaultMinThreads = defaultMinThreads;
         return this;
@@ -102,7 +109,7 @@ public class LifecycledThreadPoolModule extends AbstractModule
      * Set the default pool max thread count.  May be 0, in which case the executor will be a
      * {@link MoreExecutors#sameThreadExecutor()}.
      */
-    public LifecycledThreadPoolModule withDefaultMaxThreads(int defaultMaxThreads)
+    public NessThreadPoolModule withDefaultMaxThreads(int defaultMaxThreads)
     {
         this.defaultMaxThreads = defaultMaxThreads;
         return this;
@@ -111,7 +118,7 @@ public class LifecycledThreadPoolModule extends AbstractModule
     /**
      * Set the default worker thread idle timeout.
      */
-    public LifecycledThreadPoolModule withDefaultThreadTimeout(long duration, TimeUnit units)
+    public NessThreadPoolModule withDefaultThreadTimeout(long duration, TimeUnit units)
     {
         defaultTimeout = new TimeSpan(duration, units);
         return this;
@@ -121,7 +128,7 @@ public class LifecycledThreadPoolModule extends AbstractModule
      * Set the default queue length.  May be 0, in which case the queue will be a
      * {@link SynchronousQueue}.
      */
-    public LifecycledThreadPoolModule withDefaultQueueSize(int defaultQueueSize)
+    public NessThreadPoolModule withDefaultQueueSize(int defaultQueueSize)
     {
         this.defaultQueueSize = defaultQueueSize;
         return this;
@@ -130,7 +137,7 @@ public class LifecycledThreadPoolModule extends AbstractModule
     /**
      * Set the default rejected execution handler.
      */
-    public LifecycledThreadPoolModule withDefaultRejectedHandler(RejectedExecutionHandler defaultRejectedHandler)
+    public NessThreadPoolModule withDefaultRejectedHandler(RejectedExecutionHandler defaultRejectedHandler)
     {
         this.defaultRejectedHandler = defaultRejectedHandler;
         return this;
@@ -139,18 +146,17 @@ public class LifecycledThreadPoolModule extends AbstractModule
     /**
      * Add a CallableWrapper that may decorate this executor service.
      */
-    public LifecycledThreadPoolModule withWrapper(CallableWrapper wrapper)
+    public LinkedBindingBuilder<CallableWrapper> bindWrapper(Binder binder)
     {
-        this.wrappers.add(wrapper);
-        return this;
+        return Multibinder.newSetBinder(binder, CallableWrapper.class, annotation).permitDuplicates().addBinding();
     }
 
     /**
      * Remove an already-added CallableWrapper.
      */
-    public LifecycledThreadPoolModule withoutWrapper(CallableWrapper wrapper)
+    public NessThreadPoolModule disableThreadDelegation()
     {
-        this.wrappers.remove(wrapper);
+        this.threadDelegatingWrapperEnabled = false;
         return this;
     }
 
@@ -165,9 +171,13 @@ public class LifecycledThreadPoolModule extends AbstractModule
         private ThreadPoolConfiguration config;
         private volatile ExecutorService service;
         private volatile ExecutorServiceManagementBean management;
+        private Set<CallableWrapper> wrappers;
 
         @Inject
-        public void inject(Config config, Lifecycle lifecycle) {
+        public void inject(Config config, Lifecycle lifecycle, Injector injector)
+        {
+            wrappers = injector.getInstance(Key.get(new TypeLiteral<Set<CallableWrapper>>() {}, annotation));
+
             this.config = config.getBean("ness.thread-pool." + threadPoolName, ThreadPoolConfiguration.class);
 
             service = create();

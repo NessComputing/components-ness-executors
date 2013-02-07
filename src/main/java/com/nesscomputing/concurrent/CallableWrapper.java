@@ -25,7 +25,12 @@ public abstract class CallableWrapper
 
     public Runnable wrap(Runnable runnable)
     {
-        return new RunnableCallable(wrap(new CallableRunnable(runnable)));
+        CallableRunnable unwrapped = new CallableRunnable(runnable);
+        Callable<Void> wrapped = wrap(unwrapped);
+        if (wrapped == unwrapped) {
+            return runnable;
+        }
+        return new RunnableCallable(wrapped);
     }
 
     private static class RunnableCallable implements Runnable
