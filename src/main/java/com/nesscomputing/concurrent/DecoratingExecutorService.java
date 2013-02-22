@@ -28,45 +28,16 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 
-class DecoratingExecutorService implements ExecutorService
+class DecoratingExecutorService extends DelegatingExecutorService implements ExecutorService
 {
     private final ExecutorService wrappedExcutorService;
     private final CallableWrapper wrapper;
 
     DecoratingExecutorService(final ExecutorService wrappedExecutorService, final CallableWrapper wrapper)
     {
+        super(wrappedExecutorService);
         this.wrappedExcutorService = wrappedExecutorService;
         this.wrapper = wrapper;
-    }
-
-    @Override
-    public void shutdown()
-    {
-        wrappedExcutorService.shutdown();
-    }
-
-    @Override
-    public List<Runnable> shutdownNow()
-    {
-        return wrappedExcutorService.shutdownNow();
-    }
-
-    @Override
-    public boolean isShutdown()
-    {
-        return wrappedExcutorService.isShutdown();
-    }
-
-    @Override
-    public boolean isTerminated()
-    {
-        return wrappedExcutorService.isTerminated();
-    }
-
-    @Override
-    public boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException
-    {
-        return wrappedExcutorService.awaitTermination(timeout, unit);
     }
 
     @Override
