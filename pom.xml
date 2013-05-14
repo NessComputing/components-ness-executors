@@ -13,13 +13,13 @@
     <connection>scm:git:git://github.com/NessComputing/components-ness-executors.git</connection>
     <developerConnection>scm:git:git@github.com:NessComputing/components-ness-executors.git</developerConnection>
     <url>http://github.com/NessComputing/components-ness-executors</url>
-    <tag>HEAD</tag>
+    <tag>ness-executors-0.2.0</tag>
   </scm>
 
   <groupId>com.nesscomputing.components</groupId>
   <artifactId>ness-executors</artifactId>
   <name>ness-executors</name>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.2.0</version>
   <packaging>jar</packaging>
   <description>Ness ExecutorService support</description>
 
