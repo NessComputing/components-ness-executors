@@ -32,7 +32,7 @@ import com.google.common.collect.Sets;
 /**
  * Helper methods for ExecutorServices.
  */
-public class NessExecutors
+public final class NessExecutors
 {
 
     private NessExecutors() { }

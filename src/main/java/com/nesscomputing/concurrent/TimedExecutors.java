@@ -17,7 +17,7 @@ package com.nesscomputing.concurrent;
 
 import com.yammer.metrics.core.MetricsRegistry;
 
-public class TimedExecutors
+public final class TimedExecutors
 {
     private TimedExecutors() {}
 
