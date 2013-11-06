@@ -18,7 +18,7 @@ package com.nesscomputing.concurrent;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
-public class DecoratingExecutors
+public final class DecoratingExecutors
 {
     private DecoratingExecutors() {}
 

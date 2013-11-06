@@ -41,6 +41,7 @@ class TimerWrapper extends CallableWrapper
     }
 
     @Override
+    @SuppressWarnings("PMD.PrematureDeclaration")
     public <T> Callable<T> wrap(final Callable<T> callable)
     {
         final long enqueueNanos = System.nanoTime();
