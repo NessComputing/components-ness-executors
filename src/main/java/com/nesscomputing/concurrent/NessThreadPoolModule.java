@@ -237,7 +237,7 @@ public class NessThreadPoolModule extends AbstractModule
         {
             ExecutorService myService = service;
             Preconditions.checkState(myService != null, "Thread pool %s was injected before lifecycle start or after lifecycle stop.  " +
-            		"You might consider injecting a Provider instead, or maybe you forgot a Lifecycle entirely.", threadPoolName);
+                    "You might consider injecting a Provider instead, or maybe you forgot a Lifecycle entirely.", threadPoolName);
             return myService;
         }
 
