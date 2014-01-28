@@ -5,21 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.nesscomputing</groupId>
-    <artifactId>ness-oss-parent</artifactId>
-    <version>33</version>
+    <artifactId>ness-root</artifactId>
+    <version>1.0-SNAPSHOT</version>
   </parent>
-
-  <scm>
-    <connection>scm:git:git://github.com/NessComputing/components-ness-executors.git</connection>
-    <developerConnection>scm:git:git@github.com:NessComputing/components-ness-executors.git</developerConnection>
-    <url>http://github.com/NessComputing/components-ness-executors</url>
-    <tag>HEAD</tag>
-  </scm>
 
   <groupId>com.nesscomputing.components</groupId>
   <artifactId>ness-executors</artifactId>
   <name>ness-executors</name>
-  <version>0.2.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>Ness ExecutorService support</description>
 
@@ -27,25 +19,21 @@
     <dependency>
       <groupId>com.nesscomputing.components</groupId>
       <artifactId>ness-config</artifactId>
-      <version>2.2.0</version>
     </dependency>
 
     <dependency>
       <groupId>com.nesscomputing.components</groupId>
       <artifactId>ness-lifecycle</artifactId>
-      <version>1.3.0</version>
     </dependency>
     
     <dependency>
       <groupId>com.nesscomputing.components</groupId>
       <artifactId>ness-logging</artifactId>
-      <version>1.1.1</version>
     </dependency>
 
     <dependency>
       <groupId>com.nesscomputing.components</groupId>
       <artifactId>ness-scopes</artifactId>
-      <version>1.0.0</version>
     </dependency>
 
     <dependency>
@@ -61,19 +49,16 @@
     <dependency>
       <groupId>com.yammer.metrics</groupId>
       <artifactId>metrics-core</artifactId>
-      <version>2.1.2</version>
     </dependency>
 
     <dependency>
       <groupId>org.weakref</groupId>
       <artifactId>jmxutils</artifactId>
-      <version>1.12</version>
     </dependency>
 
     <dependency>
       <groupId>com.mogwee</groupId>
       <artifactId>mogwee-executors</artifactId>
-      <version>1.2.0</version>
     </dependency>
 
     <dependency>
@@ -85,10 +70,12 @@
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
     </dependency>
+
     <dependency>
       <groupId>com.google.inject.extensions</groupId>
       <artifactId>guice-multibindings</artifactId>
     </dependency>
+
     <dependency>
       <groupId>com.google.inject.extensions</groupId>
       <artifactId>guice-servlet</artifactId>
@@ -98,7 +85,6 @@
     <dependency>
       <groupId>com.yammer.metrics</groupId>
       <artifactId>metrics-guice</artifactId>
-      <version>2.1.2</version>
       <scope>test</scope>
     </dependency>
 

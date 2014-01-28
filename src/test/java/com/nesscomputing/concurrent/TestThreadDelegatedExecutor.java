@@ -28,13 +28,13 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 import com.google.inject.servlet.GuiceFilter;
 
+import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScope;
+import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScopeModule;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScope;
-import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScopeModule;
 
 public class TestThreadDelegatedExecutor
 {

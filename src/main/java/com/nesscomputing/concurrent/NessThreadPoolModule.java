@@ -44,16 +44,16 @@ import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.mogwee.executors.LoggingExecutor;
 
-import org.apache.commons.lang3.time.StopWatch;
-import org.skife.config.TimeSpan;
-import org.weakref.jmx.guice.MBeanModule;
-
 import com.nesscomputing.concurrent.ThreadPoolConfiguration.RejectedHandler;
 import com.nesscomputing.config.Config;
 import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleListener;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.logging.Log;
+
+import org.apache.commons.lang3.time.StopWatch;
+import org.skife.config.TimeSpan;
+import org.weakref.jmx.guice.MBeanModule;
 
 /**
  * Guice bindings for a configurable, lifecycled {@link ExecutorService}.
