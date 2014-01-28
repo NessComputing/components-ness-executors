@@ -15,14 +15,8 @@
  */
 package com.nesscomputing.concurrent;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
-import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
-import java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy;
-import java.util.concurrent.ThreadPoolExecutor.DiscardPolicy;
 
 import org.skife.config.Config;
 import org.skife.config.DefaultNull;
@@ -33,11 +27,11 @@ import org.skife.config.TimeSpan;
  */
 interface ThreadPoolConfiguration
 {
-    static final int DEFAULT_MIN_THREADS = 1;
-    static final int DEFAULT_MAX_THREADS = 16;
-    static final TimeSpan DEFAULT_TIMEOUT = new TimeSpan("30m");
-    static final int DEFAULT_QUEUE_SIZE = 10;
-    static final RejectedHandler DEFAULT_REJECTED_HANDLER = RejectedHandler.CALLER_RUNS;
+    int DEFAULT_MIN_THREADS = 1;
+    int DEFAULT_MAX_THREADS = 16;
+    TimeSpan DEFAULT_TIMEOUT = new TimeSpan("30m");
+    int DEFAULT_QUEUE_SIZE = 10;
+    RejectedHandler DEFAULT_REJECTED_HANDLER = RejectedHandler.CALLER_RUNS;
 
     /**
      * Configuration options to select {@link RejectedExecutionHandler}s.

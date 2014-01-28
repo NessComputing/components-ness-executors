@@ -33,15 +33,15 @@ import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.yammer.metrics.guice.InstrumentationModule;
 
-import org.junit.Test;
-import org.weakref.jmx.guice.MBeanModule;
-
 import com.nesscomputing.config.ConfigModule;
 import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.LifecycleModule;
 import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScope;
 import com.nesscomputing.scopes.threaddelegate.ThreadDelegatedScopeModule;
+
+import org.junit.Test;
+import org.weakref.jmx.guice.MBeanModule;
 
 public class LifecycleThreadPoolTest
 {
